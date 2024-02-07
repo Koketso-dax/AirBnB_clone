@@ -37,7 +37,7 @@ class BaseModel:
     def to_dict(self):
         """ Dictionary view using key / value pairs """
         copy_dict = self.__dict__.copy()
-        copy_dict['__class__'] = self.__class__.__name__
+        copy_dict['__class__'] = type(self).__name__
         copy_dict['created_at'] = self.created_at.isoformat()
         copy_dict['updated_at'] = self.updated_at.isoformat()
         return copy_dict
