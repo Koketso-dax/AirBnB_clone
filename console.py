@@ -2,6 +2,7 @@
 import cmd
 import json
 import uuid
+import re
 from models.base_model import BaseModel
 from models import storage
 """ Main console program entry point """
@@ -57,7 +58,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             instance_list = [str(obj) for obj in storage.all().values()
-                    if not in words or type(obj).__name == words[0]]
+                    if not words or type(obj).__name == words[0]]
             print(instance_list)
 
     def do_destroy(self, arg):
@@ -89,7 +90,42 @@ class HBNBCommand(cmd.Cmd):
         elif words[0] not in storage.class_names():
             print("** class doesn't exist **")
         else:
+            class_name = words[0]
+            matches = [key for key in storage.all() if key.startswith(f"{class_name}.")]
+            print(len(matches))
+    
+    def do_update(self, arg):
+        """ Updates one or more fields in an instance """
+        if not arg:
+            print("** class name missing **")
+            return
+        rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
+        match = re.search(rex, line)
+        if not match:
+            print("** class name missing **")
+            return
+        classname, uid, attribute, value = match.groups()
 
+        if classname not in storage.class_names():
+            print("** class doesn't exist **")
+        elif uid is None:
+            print("** instance id doesn't exist **")
+        else:
+            key = f"{classname}.{uid}"
+            if key not in storage.all():
+                print("** no instance found **")
+            elif not attribute:
+                print("** attribute name missing **")
+            elif not value:
+                print("** value missing **")
+            else:
+                cast = float if '.' in value else int
+                value = value.replace('"', '') if re.search('^".*"$', value) else cast(value)
+                attributes = storage.attributes().get(classname, {})
+                if attribute in attributes:
+                    value = attributes[attribute](value)
+                setattr(storage.all()[key], attribute, value)
+                storage.all()[key].save()
 if __name__ == '__main__':
     hbnb_console = HBNBCommand()
     hbnb_console.cmdloop()
