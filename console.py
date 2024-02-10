@@ -50,7 +50,7 @@ class HBNBCommand(cmd.Cmd):
                 key = "{}.{}".format(words[0], words[1])
                 instance_dict = storage.all()
                 print(instance_dict.get(key, "** no instance found **"))
-    
+
     def do_all(self, arg):
         """ Print str representation of all current entries """
         words = arg.split()
@@ -58,7 +58,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             instance_list = [str(obj) for obj in storage.all().values()
-                    if not words or type(obj).__name == words[0]]
+                             if not words or type(obj).__name == words[0]]
             print(instance_list)
 
     def do_destroy(self, arg):
@@ -80,7 +80,7 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     del storage.all()[key]
                     storage.save()
-    
+
     def do_count(self, arg):
         """ Counts current number of instances of a class """
         words = arg.split()
@@ -91,9 +91,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             class_name = words[0]
-            matches = [key for key in storage.all() if key.startswith(f"{class_name}.")]
+            matches = [key for key in storage.all()
+                       if key.startswith(f"{class_name}.")]
             print(len(matches))
-    
+
     def do_update(self, arg):
         """ Updates one or more fields in an instance """
         if not arg:
@@ -120,12 +121,17 @@ class HBNBCommand(cmd.Cmd):
                 print("** value missing **")
             else:
                 cast = float if '.' in value else int
-                value = value.replace('"', '') if re.search('^".*"$', value) else cast(value)
+                if re.search('^".*"$', value):
+                    value = value.replace('"', '')
+                else:
+                    cast(value)
                 attributes = storage.attributes().get(classname, {})
                 if attribute in attributes:
                     value = attributes[attribute](value)
                 setattr(storage.all()[key], attribute, value)
                 storage.all()[key].save()
+
+
 if __name__ == '__main__':
     hbnb_console = HBNBCommand()
     hbnb_console.cmdloop()
