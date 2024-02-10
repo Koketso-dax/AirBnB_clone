@@ -13,6 +13,38 @@ class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb)"
     file_path = "file.json"
 
+    def default(self, arg):
+        """ Default Idle status """
+        self._precmd(arg)
+
+    def _precmd(self, arg):
+        """Intercepts commands to test for class.syntax()"""
+        
+        match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", arg)
+        if not match:
+            return arg
+
+        classname, method, args = match.groups()
+        match_uid_and_args = re.search('^"([^"]*)"(?:, (.*))?$', args)
+        if match_uid_and_args:
+            uid, attr_or_dict = match_uid_and_args.groups()
+        else:
+            uid, attr_or_dict = args, False
+            attr_and_value = ""
+        if method == "update" and attr_or_dict:
+            match_dict = re.search('^({.*})$', attr_or_dict)
+            if match_dict:
+                self.update_dict(classname, uid, match_dict.group(1))
+                return ""
+            match_attr_and_value = re.search(
+                                              '^(?:"([^"]*)")?(?:, (.*))?$', attr_or_dict)
+            if match_attr_and_value:
+                attr_and_value = (match_attr_and_value.group(1) or "") + " " + (match_attr_and_value.group(2) or "")
+            command = f"{method} {classname} {uid} {attr_and_value}"
+            self.onecmd(command)
+            return command
+
+
     def do_quit(self, arg):
         """ Quit cmd to close shell """
         return True
