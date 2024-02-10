@@ -18,8 +18,8 @@ class HBNBCommand(cmd.Cmd):
         self._precmd(arg)
 
     def _precmd(self, arg):
-        """Intercepts commands to test for class.syntax()"""
-        
+        """ Intercepts commands to test for class.syntax() """
+
         match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", arg)
         if not match:
             return arg
@@ -36,14 +36,14 @@ class HBNBCommand(cmd.Cmd):
             if match_dict:
                 self.update_dict(classname, uid, match_dict.group(1))
                 return ""
-            match_attr_and_value = re.search(
-                                              '^(?:"([^"]*)")?(?:, (.*))?$', attr_or_dict)
+            match_attr_and_value = re.search('^(?:"([^"]*)")?(?:, (.*))?$',
+                                             attr_or_dict)
             if match_attr_and_value:
-                attr_and_value = (match_attr_and_value.group(1) or "") + " " + (match_attr_and_value.group(2) or "")
+                attr_and_value = (match_attr_and_value.group(1) or "") + " " +
+                (match_attr_and_value.group(2) or "")
             command = f"{method} {classname} {uid} {attr_and_value}"
             self.onecmd(command)
             return command
-
 
     def do_quit(self, arg):
         """ Quit cmd to close shell """
