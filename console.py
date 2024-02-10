@@ -17,6 +17,10 @@ class HBNBCommand(cmd.Cmd):
         """ Quit cmd to close shell """
         return True
 
+    def do_help(self, arg):
+        """ View Commands and documentation """
+        cmd.Cmd.do_help(self, arg)
+
     def do_EOF(self, arg):
         """ Handles EOF cmd to close shell """
         return True
