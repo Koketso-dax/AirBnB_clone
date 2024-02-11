@@ -2,15 +2,37 @@
 import uuid
 from datetime import datetime
 from models import storage
-""" Base class model module """
+""" Basemodel module """
 
 
 class BaseModel:
+    """ BaseModel Class implementation.
+    This class will define all common attributes & methods for all sub classes
+    in the AirBnB Project.
 
-    """ BaseModel Class implementation """
+    Args:
+         args (list): positional arguments
+         kwargs (dict): Keyword value arguments
+
+    Attributes:
+               id (str): Instance Id
+               created_at (str): Time of object instantiation
+               updated_at (str): Most recent modification time.
+    Methods:
+            __str__(): Returns str representation of Model.
+            save(): Saves current model state to file.
+            to_dict(): dictionary representation of a model.
+    Returns:
+            obj: Object instance of BaseModel.
+    """
 
     def __init__(self, *args, **kwargs):
-        """ Initialization """
+        """ Initialization
+
+        Args:
+            args (list): positional args.
+            kwargs (dict): key value args
+        """
         if kwargs:
             t_format = "%Y-%m-%dT%H:%M:%S.%f"
             for key, value in kwargs.items():
@@ -28,7 +50,7 @@ class BaseModel:
 
     def __str__(self):
         " string format """
-        return ("[{}] ({}) {}".format(self.__class__.__name__,
+        return ("[{}] ({}) {}".format(type(self).__name__,
                                       self.id, self.__dict__))
 
     def save(self):
