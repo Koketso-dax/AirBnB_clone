@@ -137,7 +137,7 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-        rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
+        rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s"([^"]*)")?)?)?$'
         match = re.search(rex, arg)
         if not match:
             print("** class name missing **")
