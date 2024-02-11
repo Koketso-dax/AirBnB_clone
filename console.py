@@ -39,8 +39,9 @@ class HBNBCommand(cmd.Cmd):
             match_attr_and_value = re.search('^(?:"([^"]*)")?(?:, (.*))?$',
                                              attr_or_dict)
             if match_attr_and_value:
-                attr_and_value = (match_attr_and_value.group(1) or "") + " " +
-                (match_attr_and_value.group(2) or "")
+                a = (match_attr_and_value.group(1) or "") + " "
+                b = (match_attr_and_value.group(2) or "")
+                attr_and_value = a + b
             command = f"{method} {classname} {uid} {attr_and_value}"
             self.onecmd(command)
             return command
@@ -137,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
-        match = re.search(rex, line)
+        match = re.search(rex, arg)
         if not match:
             print("** class name missing **")
             return
