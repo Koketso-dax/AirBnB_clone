@@ -170,11 +170,13 @@ class HBNBCommand(cmd.Cmd):
                 storage.all()[key].save()
     
     def postcmd(self, stop, arg):
+        """ Print new line after command exercution in non-interactive mode """
         if sys.ps1 is None and sys.ps2 is None:
             print()
         return stop
 
 
 if __name__ == '__main__':
+    """ Will run an instance of the console """
     hbnb_console = HBNBCommand()
     hbnb_console.cmdloop()
