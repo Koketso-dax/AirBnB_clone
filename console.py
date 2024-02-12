@@ -153,7 +153,7 @@ class HBNBCommand(cmd.Cmd):
         if classname not in storage.class_names():
             print("** class doesn't exist **")
         elif uid is None:
-            print("** instance id doesn't exist **")
+            print("** instance id missing **")
         else:
             key = f"{classname}.{uid}"
             if key not in storage.all():
