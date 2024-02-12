@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" Main console program entry point """
 import cmd
 import json
 import sys
@@ -6,7 +7,6 @@ import uuid
 import re
 from models import *
 from models import storage
-""" Main console program entry point """
 
 
 class HBNBCommand(cmd.Cmd):
