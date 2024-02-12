@@ -59,7 +59,7 @@ class HBNBCommand(cmd.Cmd):
         """ Handles EOF cmd to close shell """
         return True
 
-    def do_emptyline(self):
+    def emptyline(self):
         """ Does absolutely nothing """
         pass
 
@@ -174,11 +174,11 @@ class HBNBCommand(cmd.Cmd):
                 setattr(storage.all()[key], attribute, value)
                 storage.all()[key].save()
 
-    """ def postcmd(self, stop, arg):
-        Print new line after command exercution in non-interactive mode
+    def postcmd(self, stop, arg):
+        """ Print new line after command exercution in non-interactive mode """
         if not sys.stdin.isatty():
             print()
-        return stop """
+        return stop
 
 
 if __name__ == '__main__':
