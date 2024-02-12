@@ -91,13 +91,18 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """ Print str representation of all current entries """
-        words = arg.split()
-        if words and words[0] not in storage.class_names():
-            print("** class doesn't exist **")
+        if not arg:
+            instance_strings = [str(obj) for obj in storage.all().values()]
+            print(instance_strings)
         else:
-            instance_list = [str(obj) for obj in storage.all().values()
-                             if not words or type(obj).__name == words[0]]
-            print(instance_list)
+            words = arg.split()
+            class_name = words[0]
+            if class_name not in storage.class_names():
+                print("** class doesn't exist **")
+            else:
+                instance_list = [str(obj) for obj in storage.all().values()
+                                 if type(obj).__name__ == class_name]
+                print(instance_list)
 
     def do_destroy(self, arg):
         """ Deletes an instance based on the classname and id. """
@@ -168,10 +173,10 @@ class HBNBCommand(cmd.Cmd):
                     value = attributes[attribute](value)
                 setattr(storage.all()[key], attribute, value)
                 storage.all()[key].save()
-    
+
     def postcmd(self, stop, arg):
         """ Print new line after command exercution in non-interactive mode """
-        if sys.ps1 is None and sys.ps2 is None:
+        if not sys.stdin.isatty():
             print()
         return stop
 
