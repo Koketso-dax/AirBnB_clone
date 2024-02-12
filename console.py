@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 import cmd
 import json
+import sys
 import uuid
 import re
-from models.base_model import BaseModel
+from models import *
 from models import storage
 """ Main console program entry point """
 
@@ -167,6 +168,11 @@ class HBNBCommand(cmd.Cmd):
                     value = attributes[attribute](value)
                 setattr(storage.all()[key], attribute, value)
                 storage.all()[key].save()
+    
+    def postcmd(self, stop, arg):
+        if sys.ps1 is None and sys.ps2 is None:
+            print()
+        return stop
 
 
 if __name__ == '__main__':
