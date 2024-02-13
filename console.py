@@ -153,7 +153,7 @@ class HBNBCommand(cmd.Cmd):
         if uid is None:
             print("** instance id missing **")
             return
-        
+
         key = "{}.{}".format(classname, uid)
         instance_dict = storage.all()
 
@@ -168,7 +168,7 @@ class HBNBCommand(cmd.Cmd):
             if attribute in attributes:
                 value = attributes[attribute](value)
             setattr(instance, attribute, value)
-        
+
         instance.save()
 
     def do_update(self, arg):
@@ -176,10 +176,10 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-        
+
         rex = r'^(\S+)\s(\S+)\s(\S+)\s"([^"]+)"$'
         match = re.search(rex, arg)
-        
+
         if not match:
             print("** invalid syntax **")
             return

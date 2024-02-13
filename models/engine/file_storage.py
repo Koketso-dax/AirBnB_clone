@@ -50,7 +50,7 @@ class FileStorage():
             old_dict = {key: self.class_names()[value["__class__"]](**value)
                         for key, value in old_dict.items()}
             FileStorage.__objects = old_dict
-    
+
     def attributes(self):
         """ Defines and returns dict of valid attr """
         attributes = {
