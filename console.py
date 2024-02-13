@@ -145,7 +145,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
-        rex = r'^(\S+)\s(\S+)\s(\S+)\s"([^"]+)"$'
+        rex = r'^(\S+)\s(\S+)(?:\s(\S+)(?:\s"([^"]+)")?)?$'
         match = re.search(rex, arg)
 
         if not match:
@@ -163,6 +163,10 @@ class HBNBCommand(cmd.Cmd):
 
             if key not in instance_dict:
                 print("** no instance found **")
+            elif not attribute and not value:
+                instance = instance_dict[key]
+                instance.updated_at = datetime.now().isoformat()
+                instance.save()
             elif not value:
                 print("** value missing **")
             else:
