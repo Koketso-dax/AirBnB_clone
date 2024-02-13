@@ -7,6 +7,7 @@ import uuid
 import re
 from models import *
 from models import storage
+import datetime
 
 
 class HBNBCommand(cmd.Cmd):
@@ -138,15 +139,49 @@ class HBNBCommand(cmd.Cmd):
                        if key.startswith(f"{class_name}.")]
             print(len(matches))
 
+    def update_dict(classname, uid, js_dict):
+        """ Util method for attribute handling in update """
+        js = js_dict.replace("'", '"')
+        data_dict = json.loads(js)
+
+        if not classname:
+            print("** class name missing **")
+            return
+        if classname not in storage.class_names():
+            print("** class doesn't exist **")
+            return
+        if uid is None:
+            print("** instance id missing **")
+            return
+        
+        key = "{}.{}".format(classname, uid)
+        instance_dict = storage.all()
+
+        if key not in instance_dict:
+            print("** no instance found **")
+            return
+
+        attributes = storage.attributes()[classname]
+        instance = instance_dict[key]
+
+        for attribute, value in data_dict.items():
+            if attribute in attributes:
+                value = attributes[attribute](value)
+            setattr(instance, attribute, value)
+        
+        instance.save()
+
     def do_update(self, arg):
         """ Updates one or more fields in an instance """
         if not arg:
             print("** class name missing **")
             return
-        rex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s"([^"]*)")?)?)?$'
+        
+        rex = r'^(\S+)\s(\S+)\s(\S+)\s"([^"]+)"$'
         match = re.search(rex, arg)
+        
         if not match:
-            print("** class name missing **")
+            print("** invalid syntax **")
             return
         classname, uid, attribute, value = match.groups()
 
@@ -155,24 +190,25 @@ class HBNBCommand(cmd.Cmd):
         elif uid is None:
             print("** instance id missing **")
         else:
-            key = f"{classname}.{uid}"
-            if key not in storage.all():
+            key = "{}.{}".format(classname, uid)
+            instance_dict = storage.all()
+
+            if key not in instance_dict:
                 print("** no instance found **")
-            elif not attribute:
+            elif attribute not in storage.attributes().get(classname, {}):
                 print("** attribute name missing **")
             elif not value:
                 print("** value missing **")
+            elif attribute in ["id", "created_at", "updated_at"]:
+                print("** cannot update id, created_at, and updated_at **")
             else:
-                cast = float if '.' in value else int
-                if re.search('^".*"$', value):
-                    value = value.replace('"', '')
-                else:
-                    cast(value)
-                attributes = storage.attributes().get(classname, {})
-                if attribute in attributes:
-                    value = attributes[attribute](value)
-                setattr(storage.all()[key], attribute, value)
-                storage.all()[key].save()
+                cast_type = storage.attributes()[classname][attribute]
+                try:
+                    casted_value = cast_type(value)
+                    setattr(instance_dict[key], attribute, casted_value)
+                    instance_dict[key].save()
+                except (ValueError, TypeError):
+                    print("** invvalid value type for attribute **")
 
     def postcmd(self, stop, arg):
         """ Print new line after command exercution in non-interactive mode """
